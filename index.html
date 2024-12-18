@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Water Level and Venturimeter Discharge Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin-left: 330 auto;
+            padding-left: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+        }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container", >
+        <h1>Water Level and Venturimeter Discharge Calculator</h1>
+
+        <form id="calculator-form">
+            <h3>Discharge Measurement</h3>
+            <div class="input-group">
+                <label for="initial-level">Initial Level (cm):</label>
+                <input type="number" id="initial-level" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="final-level">Final Level (cm):</label>
+                <input type="number" id="final-level" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="length">Length of Measuring Tank (cm):</label>
+                <input type="number" id="length" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="width">Width of Measuring Tank (cm):</label>
+                <input type="number" id="width" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="time-period">Time Period (s):</label>
+                <input type="number" id="time-period" step="any" required>
+            </div>
+
+            <h3>Venturimeter Parameters</h3>
+            <div class="input-group">
+                <label for="inlet-diameter">Inlet Diameter (cm):</label>
+                <input type="number" id="inlet-diameter" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="throat-diameter">Throat Diameter (cm):</label>
+                <input type="number" id="throat-diameter" step="any" required>
+            </div>
+            <div class="input-group">
+                <label for="manometer-height">Differential Manometer Height Difference (cm of mercury):</label>
+                <input type="number" id="manometer-height" step="any" required>
+            </div>
+
+            <button type="button" onclick="calculateDischarges()">Calculate</button>
+        </form>
+
+        <div id="results" class="result" style="display: none;">
+            <p><strong>Actual Discharge:</strong> <span id="actual-discharge"></span> cm<sup>3</sup>/s</p>
+            <p><strong>Theoretical Discharge:</strong> <span id="theoretical-discharge"></span> cm<sup>3</sup>/s</p>
+            <p><strong>Coefficient of Discharge:</strong> <span id="coefficient-of-discharge"></span></p>
+            <h4>Formulas Used:</h4>
+            <p>Q<sub>actual</sub> = (L × W × (H<sub>final</sub> - H<sub>initial</sub>)) / t</p>
+            <p>Q<sub>theoretical</sub> = A<sub>throat</sub> × sqrt((2 × g × Δh) / (1 - (A<sub>throat</sub> / A<sub>pipe</sub>)<sup>2</sup>))</p>
+            <p>C<sub>d</sub> = Q<sub>actual</sub> / Q<sub>theoretical</sub></p>
+        </div>
+    </div>
+
+    <script>
+        function calculateDischarges() {
+            // Get input values
+            const initialLevel = parseFloat(document.getElementById('initial-level').value);
+            const finalLevel = parseFloat(document.getElementById('final-level').value);
+            const length = parseFloat(document.getElementById('length').value);
+            const width = parseFloat(document.getElementById('width').value);
+            const timePeriod = parseFloat(document.getElementById('time-period').value);
+            const inletDiameter = parseFloat(document.getElementById('inlet-diameter').value);
+            const throatDiameter = parseFloat(document.getElementById('throat-diameter').value);
+            const manometerHeight = parseFloat(document.getElementById('manometer-height').value);
+
+            // Constants
+            const g = 981; // Acceleration due to gravity in cm/s²
+            const densityMercury = 13.6; // Density of mercury relative to water
+
+            // Calculate actual discharge in cm³/s
+            const heightDifference = finalLevel - initialLevel;
+            const volume = length * width * heightDifference;
+            const actualDischarge = volume / timePeriod;
+
+            // Calculate theoretical discharge in cm³/s
+            const areaPipe = Math.PI * Math.pow(inletDiameter / 2, 2);
+            const areaThroat = Math.PI * Math.pow(throatDiameter / 2, 2);
+            const deltaH = manometerHeight * (densityMercury - 1);
+            const theoreticalDischarge = areaThroat * Math.sqrt((2 * g * deltaH) / (1 - Math.pow(areaThroat / areaPipe, 2)));
+
+            // Calculate coefficient of discharge
+            const coefficientOfDischarge = actualDischarge / theoreticalDischarge;
+
+            // Display results
+            document.getElementById('actual-discharge').textContent = actualDischarge.toFixed(2);
+            document.getElementById('theoretical-discharge').textContent = theoreticalDischarge.toFixed(2);
+            document.getElementById('coefficient-of-discharge').textContent = coefficientOfDischarge.toFixed(4);
+            document.getElementById('results').style.display = 'block';
+        }
+    </script>
+
+    <footer>
+
+        <div class="copyright">
+            Made By Tushar Rajput(23109105),Siddhant(23109095), Vediesh Anand(23109107),Vinamra Baghel(23109109),Yash Gautum(23109112)  
+        </div>
+    </footer>
+</body>
+</html>
